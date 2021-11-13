@@ -8,22 +8,25 @@ using Autodesk.Revit.UI;
 
 namespace RevitDevTool.Utils
 {
-    public class DockablePaneRegisterUtils
+  /// <summary>
+  /// 可停靠窗体注册工具类
+  /// </summary>
+  public class DockablePaneRegisterUtils
+  {
+    public static void Register<T>(string strGuid, UIControlledApplication application) where T : Page, IDockablePaneProvider, new()
     {
-        public static void Register<T>(string strGuid, UIControlledApplication application) where T : Page, IDockablePaneProvider, new()
-        {
-            T page = new T();
-            Guid guid = new Guid(strGuid);
-            DockablePaneId dockablePaneId = new DockablePaneId(guid);
-            application.RegisterDockablePane(dockablePaneId, page.Title, (IDockablePaneProvider)page);
-        }
-
-        public static void Register<T>(string strGuid, UIApplication application) where T : Page, IDockablePaneProvider, new()
-        {
-            T page = new T();
-            Guid guid = new Guid(strGuid);
-            DockablePaneId dockablePaneId = new DockablePaneId(guid);
-            application.RegisterDockablePane(dockablePaneId, page.Title, (IDockablePaneProvider)page);
-        }
+      T page = new T();
+      Guid guid = new Guid(strGuid);
+      DockablePaneId dockablePaneId = new DockablePaneId(guid);
+      application.RegisterDockablePane(dockablePaneId, page.Title, (IDockablePaneProvider)page);
     }
+
+    public static void Register<T>(string strGuid, UIApplication application) where T : Page, IDockablePaneProvider, new()
+    {
+      T page = new T();
+      Guid guid = new Guid(strGuid);
+      DockablePaneId dockablePaneId = new DockablePaneId(guid);
+      application.RegisterDockablePane(dockablePaneId, page.Title, (IDockablePaneProvider)page);
+    }
+  }
 }

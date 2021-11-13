@@ -8,34 +8,38 @@ using Autodesk.Revit.DB;
 using RevitDevTool.Theme;
 using RevitDevTool.Utils;
 using RevitDevTool.View;
+using Autodesk.Revit.Attributes;
 
 namespace RevitDevTool.Revit.Command
 {
-    [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    public class TraceCommand : IExternalCommand
+  [Transaction(TransactionMode.Manual)]
+  public class TraceCommand : IExternalCommand
+  {
+    public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
     {
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+      DockablePaneId dockablePaneId = new DockablePaneId(new Guid(Resource.TraceGuid));
+
+      var dockablePane = commandData.Application.GetDockablePane(dockablePaneId);
+
+      if (DockablePane.PaneIsRegistered(dockablePaneId))
+      {
+        if (dockablePane.IsShown())
         {
-            DockablePaneId dockablePaneId = new DockablePaneId(new Guid(Resource.TraceGuid));
-
-            if (DockablePane.PaneIsRegistered(dockablePaneId))
-            {
-                if (commandData.Application.GetDockablePane(dockablePaneId).IsShown())
-                {
-                    commandData.Application.GetDockablePane(dockablePaneId).Hide();
-                }
-                else
-                {
-                    commandData.Application.GetDockablePane(dockablePaneId).Show();
-                }
-            }
-            else
-            {
-                DockablePaneRegisterUtils.Register<TraceLog>(Resource.TraceGuid, commandData.Application);
-                commandData.Application.GetDockablePane(dockablePaneId).Show();
-            }
-
-            return Result.Succeeded;
+          dockablePane.Hide();
         }
+        else
+        {
+          dockablePane.Show();
+        }
+      }
+      else
+      {
+        DockablePaneRegisterUtils.Register<TraceLog>(Resource.TraceGuid, commandData.Application);
+
+        dockablePane.Show();
+      }
+
+      return Result.Succeeded;
     }
+  }
 }
